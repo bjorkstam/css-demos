@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>CSS clock animation</title>
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+		<div class="clock-frame">
+		    <div class="clock-base">
+		        <div class="arrow-hour"></div>
+		        <div class="arrow-minute"></div>
+		        <div class="arrow-second"></div>
+		    </div>
+		</div>
+
+		<script type="text/javascript">
+
+			// Minified animx lib code. See https://github.com/bjorkstam/animx
+			(function(window,undefined){var document=window.document,styleNode=document.documentElement.appendChild(document.createElement("style")),testElem=document.createElement("animx"),animx=window.animx={};function getProperty(prop){var camelProp=camelCase(prop),capProp=camelProp.charAt(0).toUpperCase()+camelProp.slice(1),vendorPrefixes="Webkit Moz O ms".split(" ");if(testElem.style[camelProp]!==undefined){return prop}for(var i=0;i<vendorPrefixes.length;i++){var vendor=vendorPrefixes[i],omKey=vendor+capProp;if(testElem.style[omKey]!==undefined){return"-"+vendor.toLowerCase()+"-"+prop}}return prop}function camelCase(str){var strLower=str.toLowerCase(),out="";for(var i=0;i<strLower.length;i++){if(strLower.charAt(i)==="-"){continue}else if(i>0&&strLower.charAt(i-1)==="-"){out+=strLower.charAt(i).toUpperCase()}else{out+=strLower.charAt(i)}}return out}animx.createKeyframes=function(config){var styleRules=[];styleRules.push(config.name+" {");for(var key in config.values){if(config.values.hasOwnProperty(key)){styleRules.push(key+" { "+config.values[key].replace(/(?:(?:[\W\s][^\-a-zA-Z]|^)([a-zA-Z][A-Za-z-]+)[\s]?:)/g,function(match,prop){return match.replace(prop,getProperty(prop))})+" }")}}styleRules.push("}");if(CSSRule.KEYFRAMES_RULE){styleNode.sheet.insertRule("@keyframes "+styleRules.join("\n"),0)}else if(CSSRule.WEBKIT_KEYFRAMES_RULE){styleNode.sheet.insertRule("@-webkit-keyframes "+styleRules.join("\n"),0)}else if(CSSRule.MOZ_KEYFRAMES_RULE){styleNode.sheet.insertRule("@-moz-keyframes "+styleRules.join("\n"),0)}else{return false}return styleNode.sheet.cssRules[0]};animx.setAnimation=function(node,animValue){var style=node.style;if(node.nodeType>0&&style&&typeof animValue==="string"){if(style.animation!==undefined){style.animation=animValue}else if(style.WebkitAnimation!==undefined){style.WebkitAnimation=animValue}else if(style.MozAnimation!==undefined){style.MozAnimation=animValue}else if(style.OAnimation!==undefined){style.OAnimation=animValue}else if(style.msAnimation!==undefined){style.msAnimation=animValue}}return}})(window);
+
+			// Begin clock code
+
+			var hourNode = document.querySelector(".arrow-hour"),
+			    minuteNode = document.querySelector(".arrow-minute"),
+			    secondNode = document.querySelector(".arrow-second"),
+			    clockNode = document.querySelector(".clock-frame"),
+			    dt = new Date(),
+			    hours = dt.getHours(),
+			    minutes = dt.getMinutes(),
+			    seconds = dt.getSeconds(),
+			    rHours, rMinutes, rSeconds;
+
+			// Ensure 12hr format
+
+			hours = hours > 12 ? hours - 12 : hours;
+
+
+			// Calculate the correct rotation for each arrow,
+			// taking into account a 90deg offset
+			rHours = ~~(360 * hours / 12) - 90;
+			rMinutes = ~~(360 * minutes / 60) - 90;
+			rSeconds = ~~(360 * seconds / 60) - 90;
+
+			animx.createKeyframes({
+				name: "hours",
+				values: {
+					from: "transform: rotateZ(" + rHours + "deg);",
+					to: "transform: rotateZ(" + (rHours + 360) + "deg);"
+				}
+			});
+			animx.createKeyframes({
+				name: "minutes",
+				values: {
+					from: "transform: rotateZ(" + rMinutes + "deg);",
+					to: "transform: rotateZ(" + (rMinutes + 360) + "deg);"
+				}
+			});
+			animx.createKeyframes({
+				name: "seconds",
+				values: {
+					from: "transform: rotateZ(" + rSeconds + "deg);",
+					to: "transform: rotateZ(" + (rSeconds + 360) + "deg);"
+				}
+			});
+
+			animx.setAnimation(hourNode, "hours 43200s linear infinite");
+			animx.setAnimation(minuteNode, "minutes 3600s linear infinite");
+			animx.setAnimation(secondNode, "seconds 60s linear infinite");
+
+		</script>
+	</body>
+</html>
