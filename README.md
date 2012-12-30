@@ -1,4 +1,4 @@
 css-demos
 =========
 
-Collection of css demos
+Clock: http://bjorkst.am/clock
